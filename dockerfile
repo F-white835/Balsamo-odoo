@@ -1,27 +1,28 @@
 # Usa la imagen oficial de Odoo 16
 FROM odoo:16
 
-# Cambiar a root para instalar paquetes del sistema
+# Usa root para instalar librerías del sistema
 USER root
 
-# Instalar dependencias para python-ldap y limpiar cache de apt
+# Instala las dependencias necesarias para python-ldap
 RUN apt-get update && apt-get install -y \
+    gcc \
+    python3-dev \
     libsasl2-dev \
     libldap2-dev \
     libssl-dev \
+    libffi-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Volver a usuario odoo para correr Odoo
+# Regresa al usuario odoo
 USER odoo
 
-# Copiar addons personalizados a la ruta extra de addons
+# Copia tus addons personalizados
 COPY ./custom_addons /mnt/extra-addons
 
-# (Opcional) Instalar dependencias de python si usas requirements.txt
-# COPY ./custom_addons/requirements.txt /tmp/
+# (Opcional) Instala dependencias si tienes requirements.txt
+# COPY ./requirements.txt /tmp/
 # RUN pip3 install -r /tmp/requirements.txt
 
-# Definir el path de addons por defecto (se puede también configurar en odoo.conf)
+# Exporta la ruta de addons como variable de entorno
 ENV ODOO_ADDONS_PATH=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons
-
-# El contenedor oficial ya inicia Odoo por defecto, no es necesario CMD aquí
