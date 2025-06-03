@@ -1,10 +1,10 @@
 # Usa la imagen oficial de Odoo 16
 FROM odoo:16
 
-# Usa root para instalar librerías del sistema
+# Usa root para instalar dependencias del sistema
 USER root
 
-# Instala las dependencias necesarias para python-ldap
+# Instala dependencias del sistema necesarias para python-ldap y otros paquetes
 RUN apt-get update && apt-get install -y \
     gcc \
     python3-dev \
@@ -14,15 +14,20 @@ RUN apt-get update && apt-get install -y \
     libffi-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Regresa al usuario odoo
+# Cambiar de nuevo a odoo
 USER odoo
 
-# Copia tus addons personalizados
+# Copiar módulos personalizados
 COPY ./custom_addons /mnt/extra-addons
 
-# (Opcional) Instala dependencias si tienes requirements.txt
-# COPY ./requirements.txt /tmp/
-# RUN pip3 install -r /tmp/requirements.txt
+# Copiar archivo de configuración
+COPY ./odoo.conf /etc/odoo/odoo.conf
 
-# Exporta la ruta de addons como variable de entorno
-ENV ODOO_ADDONS_PATH=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons
+# Instalar paquetes Python adicionales si existe requirements.txt
+COPY ./requirements.txt /tmp/requirements.txt
+RUN pip3 install -r /tmp/requirements.txt
+
+# Exponer el puerto por si hace falta
+EXPOSE 8069
+
+# El CMD por defecto de la imagen oficial ya ejecuta odoo
