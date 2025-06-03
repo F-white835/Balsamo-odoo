@@ -1,27 +1,36 @@
-# Usa la imagen oficial de Odoo 16
-FROM odoo:16
+services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: odoo
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo
+    volumes:
+      - odoo-db-data:/var/lib/postgresql/data
+    networks:
+      - odoo-net
 
-# Cambiar a root para instalar paquetes del sistema
-USER root
+  odoo:
+    build: .
+    depends_on:
+      - db
+    ports:
+      - "8069:8069"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8069
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=odoo
+      - DB_PASSWORD=odoo
+      - ADDONS_PATH=/mnt/extra-addons,./odoo/addons
+    volumes:
+      - ./addons:/mnt/extra-addons
+    networks:
+      - odoo-net
 
-# Instalar dependencias para python-ldap y limpiar cache de apt
-RUN apt-get update && apt-get install -y \
-    libsasl2-dev \
-    libldap2-dev \
-    libssl-dev \
-    && rm -rf /var/lib/apt/lists/*
+volumes:
+  odoo-db-data:
 
-# Volver a usuario odoo para correr Odoo
-USER odoo
-
-# Copiar addons personalizados a la ruta extra de addons
-COPY ./custom_addons /mnt/extra-addons
-
-# (Opcional) Instalar dependencias de python si usas requirements.txt
-# COPY ./custom_addons/requirements.txt /tmp/
-# RUN pip3 install -r /tmp/requirements.txt
-
-# Definir el path de addons por defecto (se puede también configurar en odoo.conf)
-ENV ODOO_ADDONS_PATH=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons
-
-# El contenedor oficial ya inicia Odoo por defecto, no es necesario CMD aquí
+networks:
+  odoo-net:
