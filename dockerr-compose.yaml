@@ -1,0 +1,36 @@
+services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: odoo
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo
+    volumes:
+      - odoo-db-data:/var/lib/postgresql/data
+    networks:
+      - odoo-net
+
+  odoo:
+    build: .
+    depends_on:
+      - db
+    ports:
+      - "8069:8069"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8069
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=odoo
+      - DB_PASSWORD=odoo
+      - ADDONS_PATH=/mnt/extra-addons,./odoo/addons
+    volumes:
+      - ./addons:/mnt/extra-addons
+    networks:
+      - odoo-net
+
+volumes:
+  odoo-db-data:
+
+networks:
+  odoo-net:
