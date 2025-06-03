@@ -1,6 +1,12 @@
 #!/bin/bash
-# Reemplazar variables en el template y crear odoo.conf
+
+echo "🛠️ Generando /etc/odoo/odoo.conf desde template..."
+
+# Sustituye variables en el template y genera el archivo final
 envsubst < /etc/odoo/odoo.conf.template > /etc/odoo/odoo.conf
 
-# Ejecutar el comando pasado al entrypoint (odoo)
+echo "✅ Config generado:"
+cat /etc/odoo/odoo.conf
+
+# Lanza Odoo con el archivo ya generado
 exec "$@"
