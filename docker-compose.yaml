@@ -1,36 +1,35 @@
 services:
-  db:
-    image: postgres:13
-    environment:
-      POSTGRES_DB: odoo
-      POSTGRES_USER: odoo
-      POSTGRES_PASSWORD: odoo
-    volumes:
-      - odoo-db-data:/var/lib/postgresql/data
-    networks:
-      - odoo-net
+  - type: web
+    name: odoo
+    env: docker
+    plan: free
+    autoDeploy: true
+    envVars:
+      - key: DB_HOST
+        fromService:
+          name: odoo-postgres
+          type: pserv
+      - key: DB_PORT
+        value: 5432
+      - key: DB_NAME
+        value: odoo
+      - key: DB_USER
+        value: odoo
+      - key: DB_PASSWORD
+        generateValue: true
+      - key: HOST
+        value: 0.0.0.0
+      - key: PORT
+        value: 8069
 
-  odoo:
-    build: .
-    depends_on:
-      - db
-    ports:
-      - "8069:8069"
-    environment:
-      - HOST=0.0.0.0
-      - PORT=8069
-      - DB_HOST=db
-      - DB_PORT=5432
-      - DB_USER=odoo
-      - DB_PASSWORD=odoo
-      - ADDONS_PATH=/mnt/extra-addons,./odoo/addons
-    volumes:
-      - ./addons:/mnt/extra-addons
-    networks:
-      - odoo-net
-
-volumes:
-  odoo-db-data:
-
-networks:
-  odoo-net:
+  - type: pserv
+    name: odoo-postgres
+    plan: free
+    env: postgres
+    envVars:
+      - key: POSTGRES_DB
+        value: odoo
+      - key: POSTGRES_USER
+        value: odoo
+      - key: POSTGRES_PASSWORD
+        generateValue: true
