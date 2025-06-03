@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <menuitem id="ventas_extras_menu_root"
+              name="Ventas Extras"
+              sequence="10"
+              parent="sale.sale_order_menu"
+              action=""/>
+</odoo>
+
