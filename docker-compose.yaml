@@ -6,28 +6,28 @@ services:
     autoDeploy: true
 
     startCommand: >
-      odoo --db_host=$DB_HOST
-           --db_port=$DB_PORT
-           --db_user=$DB_USER
-           --db_password=$DB_PASSWORD
-           --db_name=$DB_NAME
-           --admin_passwd=$ADMIN_PASSWD
+      odoo --db_host=$ODOO_DB_HOST
+           --db_port=$ODOO_DB_PORT
+           --db_user=$ODOO_DB_USER
+           --db_password=$ODOO_DB_PASSWORD
+           --db_name=$ODOO_DB_NAME
+           --admin_passwd=$ODOO_ADMIN_PASSWD
            --addons-path=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons
 
     envVars:
-      - key: DB_HOST
+      - key: ODOO_DB_HOST
         fromService:
           name: odoo-postgres
           type: pserv
-      - key: DB_PORT
+      - key: ODOO_DB_PORT
         value: 5432
-      - key: DB_NAME
+      - key: ODOO_DB_NAME
         value: odoo
-      - key: DB_USER
+      - key: ODOO_DB_USER
         value: odoo
-      - key: DB_PASSWORD
+      - key: ODOO_DB_PASSWORD
         generateValue: true
-      - key: ADMIN_PASSWD
+      - key: ODOO_ADMIN_PASSWD
         value: adminodoo
 
   - type: pserv
