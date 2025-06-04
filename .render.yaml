@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: odoo
+    name: mywebsite-odoo
     env: docker
     plan: free
     autoDeploy: true
@@ -32,8 +32,8 @@ services:
 
   - type: pserv
     name: odoo-postgres
-    plan: free
     env: postgres
+    plan: free
     envVars:
       - key: POSTGRES_DB
         value: odoo
